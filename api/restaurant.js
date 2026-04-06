@@ -28,7 +28,7 @@ export default async function handler(req, res) {
   const title = restaurant.name || 'inSAIGON Restaurant';
   const description = restaurant.description?.substring(0, 200) || 'Check out this restaurant on inSAIGON';
   const image = restaurant.cover_image || 'https://insaigon.app/og-image.png';
-  const appUrl = 'insaigon://';
+  const appUrl = 'insaigon://insaigon.com';
   const appStoreUrl = 'https://apps.apple.com/app/id6741071869';
   const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.twc.insaigon';
 
