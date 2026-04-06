@@ -28,7 +28,7 @@ export default async function handler(req, res) {
   const title = deal.EventName || 'inSAIGON Deal';
   const description = deal.EventDescription?.substring(0, 200) || 'Check out this deal on inSAIGON';
   const image = deal.Flyer || 'https://insaigon.app/og-image.png';
-  const appUrl = 'insaigon://insaigon.com/RandfoodDrinkDeals';
+  const appUrl = 'insaigon://';
   const appStoreUrl = 'https://apps.apple.com/app/id6741071869';
   const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.twc.insaigon';
 
