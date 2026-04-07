@@ -26,7 +26,7 @@ export default async function handler(req, res) {
 
   const title = group.chat_name || 'inSAIGON Group';
   const image = group.chat_image || 'https://insaigon.app/og-image.png';
-  const appUrl = 'insaigon://insaigon.com';
+  const appUrl = `insaigon://insaigon.com/deeplink?groupId=${id}`;
   const appStoreUrl = 'https://apps.apple.com/app/id6741071869';
   const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.twc.insaigon';
 
