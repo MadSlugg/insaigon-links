@@ -1,60 +1,60 @@
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-)
-
 export default async function handler(req, res) {
-  const { id } = req.query
-
+  const { id } = req.query;
   if (!id) {
-    return res.status(400).send('Missing id')
+    return res.status(400).send('Missing id');
   }
 
-  const { data, error } = await supabase
-    .from('groupchats')
-    .select('chat_name, chat_image')
-    .eq('id', id)
-    .single()
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  if (error || !data) {
-    return res.status(404).send('Group not found')
+  const response = await fetch(
+    `${supabaseUrl}/rest/v1/groupchats?id=eq.${id}&select=chat_name,chat_image`,
+    {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+      },
+    }
+  );
+
+  const data = await response.json();
+  const group = data[0];
+
+  if (!group) {
+    return res.status(404).send('Group not found');
   }
 
-  const title = data.chat_name ?? 'inGROUP'
-  const image = data.chat_image ?? ''
-  const deepLink = `insaigon://insaigon.com/GroupChat?groupId=${id}`
-  const appStoreUrl = 'https://apps.apple.com/app/id6741071869'
-  const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.twc.insaigon'
+  const title = group.chat_name || 'inSAIGON Group';
+  const image = group.chat_image || 'https://insaigon.app/og-image.png';
+  const appUrl = 'insaigon://insaigon.com';
+  const appStoreUrl = 'https://apps.apple.com/app/id6741071869';
+  const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.twc.insaigon';
 
   const html = `<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
   <meta property="og:title" content="${title}" />
   <meta property="og:description" content="Join this group on inSAIGON" />
   <meta property="og:image" content="${image}" />
   <meta property="og:site_name" content="inSAIGON" />
+  <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <title>${title}</title>
 </head>
 <body>
+  <p><strong>inSAIGON</strong></p>
+  <p>Opening inSAIGON...</p>
   <script>
-    const ua = navigator.userAgent || '';
-    const isIOS = /iPhone|iPad|iPod/i.test(ua);
-    const isAndroid = /Android/i.test(ua);
-    const storeUrl = isAndroid ? '${playStoreUrl}' : '${appStoreUrl}';
-    const deepLink = '${deepLink}';
-
-    window.location.href = deepLink;
-    setTimeout(() => {
-      window.location.href = storeUrl;
-    }, 2000);
-  </script>
+    var ua = navigator.userAgent;
+    var appUrl = '${appUrl}';
+    var storeUrl = /android/i.test(ua) ? '${playStoreUrl}' : '${appStoreUrl}';
+    window.location = appUrl;
+    setTimeout(function() { window.location = storeUrl; }, 2000);
+  <\/script>
 </body>
-</html>`
+</html>`;
 
-  res.setHeader('Content-Type', 'text/html')
-  res.status(200).send(html)
+  res.setHeader('Content-Type', 'text/html');
+  res.send(html);
 }
