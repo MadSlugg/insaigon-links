@@ -96,12 +96,24 @@ const appUrl = `insaigon://insaigon.com/deeplink?articleId=${id}`;
 <body>
   <p><strong>inSAIGON</strong></p>
   <p>Opening inSAIGON...</p>
-  <script>
-    var ua = navigator.userAgent;
+ <script>
     var appUrl = '${appUrl}';
+    var ua = navigator.userAgent;
     var storeUrl = /android/i.test(ua) ? '${playStoreUrl}' : '${appStoreUrl}';
+
+    var t = setTimeout(function() {
+      window.location = storeUrl;
+    }, 2000);
+
+    function cancel() { clearTimeout(t); }
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) cancel();
+    });
+    window.addEventListener('pagehide', cancel);
+    window.addEventListener('blur', cancel);
+
     window.location = appUrl;
-    setTimeout(function() { window.location = storeUrl; }, 2000);
   <\/script>
 </body>
 </html>`;
