@@ -28,7 +28,7 @@ export default async function handler(req, res) {
   const title = article.Title || 'inSAIGON News';
   const description = article.Preview || 'Read the latest from inSAIGON';
   const image = article.Image || 'https://insaigon.app/og-image.png';
-  const appUrl = 'insaigon://insaigon.com/inNEWS';
+  const appUrl = `insaigon://insaigon.com/deeplink?articleId=${record.id}`,
   const appStoreUrl = 'https://apps.apple.com/app/id6741071869';
   const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.twc.insaigon';
 
