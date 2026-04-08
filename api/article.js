@@ -48,15 +48,22 @@ export default async function handler(req, res) {
   <p><strong>inSAIGON</strong></p>
   <p>Opening inSAIGON...</p>
   <script>
-    var ua = navigator.userAgent;
     var appUrl = '${appUrl}';
+    var ua = navigator.userAgent;
     var storeUrl = /android/i.test(ua) ? '${playStoreUrl}' : '${appStoreUrl}';
+    
+    var redirected = false;
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) redirected = true;
+    });
+    
     window.location = appUrl;
-    setTimeout(function() { window.location = storeUrl; }, 2000);
+    setTimeout(function() {
+      if (!redirected) window.location = storeUrl;
+    }, 2000);
   <\/script>
 </body>
 </html>`;
-
   res.setHeader('Content-Type', 'text/html');
   res.send(html);
 }
