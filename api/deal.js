@@ -54,7 +54,7 @@ export default async function handler(req, res) {
 
     var t = setTimeout(function() {
       window.location = storeUrl;
-    }, 2000);
+    }, 4500);
 
     function cancel() { clearTimeout(t); }
 
