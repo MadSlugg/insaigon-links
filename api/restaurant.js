@@ -1,12 +1,10 @@
 export default async function handler(req, res) {
   const { id } = req.query;
   if (!id) return res.status(400).send('Missing id');
-
   const supabaseUrl = process.env.SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
   const response = await fetch(
-    `${supabaseUrl}/rest/v1/restaurants?id=eq.${id}&select=name,cover_image`,
+    `${supabaseUrl}/rest/v1/restaurants?id=eq.${id}&select=name,cover_image,description`,
     {
       headers: {
         apikey: supabaseKey,
@@ -17,19 +15,18 @@ export default async function handler(req, res) {
   const data = await response.json();
   const restaurant = data[0];
   if (!restaurant) return res.status(404).send('Restaurant not found');
-
   const title = restaurant.name || 'inSAIGON Restaurant';
   const image = restaurant.cover_image || 'https://insaigon.app/og-image.png';
+  const description = restaurant.description?.substring(0, 160) || 'View on inSAIGON';
   const appUrl = `insaigon://insaigon.com/deeplink?restaurantId=${id}`;
   const appStoreUrl = 'https://apps.apple.com/app/id6741071869';
   const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.twc.insaigon';
-
   const html = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta property="og:title" content="${title}" />
-  <meta property="og:description" content="View on inSAIGON" />
+  <meta property="og:description" content="${description}" />
   <meta property="og:image" content="${image}" />
   <meta property="og:site_name" content="inSAIGON" />
   <meta property="og:type" content="website" />
@@ -39,23 +36,19 @@ export default async function handler(req, res) {
 <body>
   <p><strong>inSAIGON</strong></p>
   <p>Opening inSAIGON...</p>
-<script>
+  <script>
     var appUrl = '${appUrl}';
     var ua = navigator.userAgent;
     var storeUrl = /android/i.test(ua) ? '${playStoreUrl}' : '${appStoreUrl}';
-
     var t = setTimeout(function() {
       window.location = storeUrl;
     }, 4500);
-
     function cancel() { clearTimeout(t); }
-
     document.addEventListener('visibilitychange', function() {
       if (document.hidden) cancel();
     });
     window.addEventListener('pagehide', cancel);
     window.addEventListener('blur', cancel);
-
     window.location = appUrl;
   <\/script>
 </body>
